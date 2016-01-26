@@ -20,6 +20,21 @@ Instructions
 * You're welcome to spend as much time as you like.
 * The code will be a representation of your work, so it's important that all the code--new and pre-existing--is how you want your work to be seen.  Please make sure that you are happy with ALL the code.
 
+#### Things We Value
+
+* Good code structure - separation of concerns,
+* A well-formed exception model,
+* Tidy code,
+* Application of appropriate design patterns,
+* Unit tests.
+
+#### Things To Avoid At All Costs
+
+* Throwing general exception,
+* Magic strings,
+* Methods that do everything,
+* No testing.
+
 my-chat
 -------
 
