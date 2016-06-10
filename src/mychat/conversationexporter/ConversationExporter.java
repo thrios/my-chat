@@ -46,9 +46,9 @@ public class ConversationExporter {
      * @param inputFilePath The input file path.
      * @param outputFilePath The output file path.
      * @param filters The filters on the file specified by the input file path
-     * @throws Exception Thrown when something bad happens.
+     * @throws IOException Thrown when file I/O fails.
      */
-    public void exportConversation(String inputFilePath, String outputFilePath, Collection<Filter> filters) throws Exception {
+    public void exportConversation(String inputFilePath, String outputFilePath, Collection<Filter> filters) throws IOException {
         Conversation conversation = readConversation(inputFilePath);
 
         conversation.setFilters(filters);
