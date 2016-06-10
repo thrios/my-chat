@@ -2,8 +2,8 @@ package mychat.conversationexporter;
 
 import com.google.gson.*;
 import mychat.conversation.Conversation;
-import mychat.filter.Filter;
 import mychat.conversation.Message;
+import mychat.filter.Filter;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -20,7 +20,7 @@ public class ConversationExporter {
     /**
      * The application entry point.
      * @param args The command line arguments.
-     * @throws Exception Thrown when something bad happens.
+     * @throws Exception Thrown when file I/O fails
      */
     public static void main(String[] args) throws Exception {
 
@@ -56,7 +56,6 @@ public class ConversationExporter {
 
         writeConversation(conversation, outputFilePath);
 
-        // TODO: Add more logging...
         System.out.println("Conversation exported from '" + inputFilePath + "' to '" + outputFilePath);
     }
 
@@ -64,14 +63,14 @@ public class ConversationExporter {
      * Helper method to write the given {@code conversation} as JSON to the given {@code outputFilePath}.
      * @param conversation The conversation to write.
      * @param outputFilePath The file path where the conversation should be written.
-     * @throws Exception Thrown when something bad happens.
+     * @throws IllegalArgumentException Thrown when the file was not found
+     * @throws IOException thrown when an I/O error occurs
      */
-    private void writeConversation(Conversation conversation, String outputFilePath) throws Exception {
-        // TODO: Do we need both to be resources, or will buffered writer close the stream?
+    private void writeConversation(Conversation conversation, String outputFilePath) throws IllegalArgumentException, IOException {
+
         try (OutputStream os = new FileOutputStream(outputFilePath);
              BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os))) {
 
-            // TODO: Maybe reuse this? Make it more testable...
             GsonBuilder gsonBuilder = new GsonBuilder();
             gsonBuilder.registerTypeAdapter(Instant.class, new InstantSerializer());
 
@@ -79,11 +78,9 @@ public class ConversationExporter {
 
             bw.write(g.toJson(conversation));
         } catch (FileNotFoundException e) {
-            // TODO: Maybe include more information?
-            throw new IllegalArgumentException("The file was not found.");
+            throw new IllegalArgumentException("The file was not found. Consider creating the file.");
         } catch (IOException e) {
-            // TODO: Should probably throw different exception to be more meaningful :/
-            throw new Exception("Something went wrong");
+            throw new IOException("Writing to file failed. Try again.");
         }
     }
 
@@ -91,9 +88,10 @@ public class ConversationExporter {
      * Represents a helper to read a conversation from the given {@code inputFilePath}.
      * @param inputFilePath The path to the input file.
      * @return The {@link Conversation} representing by the input file.
-     * @throws Exception Thrown when something bad happens.
+     * @throws IllegalArgumentException Thrown when the file was not found
+     * @throws IOException thrown when an I/O error occurs
      */
-    private Conversation readConversation(String inputFilePath) throws Exception {
+    private Conversation readConversation(String inputFilePath) throws IllegalArgumentException, IOException {
         try(InputStream is = new FileInputStream(inputFilePath);
             BufferedReader r = new BufferedReader(new InputStreamReader(is))) {
 
@@ -118,9 +116,9 @@ public class ConversationExporter {
 
             return new Conversation(conversationName, messages);
         } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("The file was not found.");
+            throw new IllegalArgumentException("The file was not found. Consider creating the file.");
         } catch (IOException e) {
-            throw new Exception("Something went wrong");
+            throw new IOException("Writing to file failed. Try again.");
         }
     }
 
